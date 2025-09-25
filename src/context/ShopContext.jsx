@@ -1,7 +1,11 @@
-import { createContext, useState } from "react";
-import { products } from "../assets/assets";
+import { createContext, useContext, useEffect, useState } from "react";
+// import { products } from "../assets/assets";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import axios from "../api/axios";
+
+import useAuth from "../hooks/useAuth";
+import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
 export const ShopContext = createContext();
 
@@ -11,7 +15,10 @@ const ShopContextProvider = (props) => {
   const [search, setSearch] = useState("");
   const [showSearch, setShowSearch] = useState(false);
   const [cartItems, setCartItems] = useState({});
+  const [products, setProducts] = useState([]);
   const navigate = useNavigate();
+  const { accessToken, isLoading } = useAuth();
+  const axiosPrivate = useAxiosPrivate();
 
   const addToCart = async (itemId, size) => {
     if (!size) {
@@ -32,7 +39,16 @@ const ShopContextProvider = (props) => {
     }
     setCartItems(cartData);
 
-    // toast.success('Cart Added')
+    if (accessToken) {
+      try {
+        await axiosPrivate.post("/api/cart/add", { itemId, size });
+      } catch (error) {
+        console.log(error);
+        if (error.response?.status === 401 || error.response?.status === 403) {
+          toast.error('Session Expired. Login Again');
+        }
+      }
+    }
   };
 
   const getCartCount = () => {
@@ -53,6 +69,28 @@ const ShopContextProvider = (props) => {
     let cartData = structuredClone(cartItems);
     cartData[itemId][size] = quantity;
     setCartItems(cartData);
+    if (accessToken) {
+      try {
+        await axiosPrivate.post("/api/cart/update", { itemId, size, quantity });
+      } catch (error) {
+        console.log(error);
+        if (error.response?.status === 401 || error.response?.status === 403) {
+          toast.error('Session Expired. Login Again');
+        }
+      }
+    }
+  };
+
+  const getUserCart = async () => {
+    try {
+      const response = await axiosPrivate.post("/api/cart/get", {});
+      if (response.data.success) {
+        setCartItems(response.data.cartData);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error.message);
+    }
   };
 
   const getCartAmount = () => {
@@ -70,6 +108,30 @@ const ShopContextProvider = (props) => {
     return totalAmount;
   };
 
+  const getProductsData = async () => {
+    try {
+      const response = await axios.get("/api/product/list");
+      if (response.data.success) {
+        setProducts(response.data.products);
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      console.log(error.message);
+      toast.error(error.message);
+    }
+  };
+
+  useEffect(() => {
+    getProductsData();
+  }, []);
+
+  useEffect(() => {
+    if (accessToken && !isLoading) {
+      getUserCart();
+    }
+  }, [accessToken, isLoading]);
+
   const value = {
     products,
     currency,
@@ -84,6 +146,7 @@ const ShopContextProvider = (props) => {
     updateQuantity,
     getCartAmount,
     navigate,
+    setCartItems,
   };
 
   return (
