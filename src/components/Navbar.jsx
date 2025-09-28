@@ -4,6 +4,7 @@ import { Link, NavLink } from "react-router-dom";
 import { ShopContext } from "../context/ShopContext";
 import useLogout from "../hooks/useLogout";
 import useAuth from "../hooks/useAuth";
+import { toast } from "react-toastify";
 
 const Navbar = () => {
   const [visible, setVisisble] = useState(false);
