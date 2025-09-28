@@ -1,20 +1,17 @@
-import React, { useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "../api/axios";
 import useAuth from "../hooks/useAuth";
 
 const Login = () => {
   const [currentState, setCurrentState] = useState("Login");
+  const location = useLocation();
   const navigate = useNavigate();
-  const { accessToken, setAccessToken } = useAuth();
+  const { setAccessToken } = useAuth();
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
-
-  useEffect(() => {
-    if (accessToken) navigate("/", { replace: true });
-  }, [accessToken, navigate]);
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
@@ -47,8 +44,9 @@ const Login = () => {
           console.log(response.data);
           setAccessToken(response.data.accessToken);
           toast.success("Login Successful");
-          setName("");
-          setPassword("");
+          // Navigate after login
+          const redirectPath = location.state?.from?.pathname || "/";
+          navigate(redirectPath, { replace: true });
         } else {
           toast.error(response.data.message);
         }
