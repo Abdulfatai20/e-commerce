@@ -5,7 +5,6 @@ const useLogout = () => {
   const { setAccessToken } = useAuth();
 
   const logout = async () => {
-    localStorage.removeItem("persist");
     setAccessToken(null);
     try {
       const response = await axios.post(

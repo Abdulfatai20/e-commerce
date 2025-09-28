@@ -17,7 +17,7 @@ const ShopContextProvider = (props) => {
   const [cartItems, setCartItems] = useState({});
   const [products, setProducts] = useState([]);
   const navigate = useNavigate();
-  const { accessToken, isLoading } = useAuth();
+  const { accessToken } = useAuth();
   const axiosPrivate = useAxiosPrivate();
 
   const addToCart = async (itemId, size) => {
@@ -118,7 +118,7 @@ const ShopContextProvider = (props) => {
       }
     } catch (error) {
       console.log(error.message);
-      toast.error(error.message);
+      // toast.error(error.message);
     }
   };
 
@@ -127,10 +127,12 @@ const ShopContextProvider = (props) => {
   }, []);
 
   useEffect(() => {
-    if (accessToken && !isLoading) {
+    if (accessToken) {
+      console.log("Fetching User Cart");
+      
       getUserCart();
     }
-  }, [accessToken, isLoading]);
+  }, [accessToken]);
 
   const value = {
     products,

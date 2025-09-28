@@ -11,6 +11,7 @@ import Orders from "./pages/Orders";
 import Layout from "./components/Layout";
 import RequireAuth from "./components/RequireAuth";
 import PersistLogin from "./components/PersistLogin";
+import Verify from "./pages/Verify";
 
 const App = () => {
   return (
@@ -19,19 +20,20 @@ const App = () => {
         <Route path="/" element={<Layout />}>
           <Route path="/login" element={<Login />} />
 
+          {/* Public routes */}
           <Route element={<PersistLogin />}>
-            {/* Public routes */}
             <Route index element={<Home />} />
             <Route path="/about" element={<About />} />
             <Route path="/product/:productId" element={<Product />} />
             <Route path="/contact" element={<Contact />} />
-             <Route path="/collection" element={<Collection />} />
+            <Route path="/collection" element={<Collection />} />
 
             {/* Protected routes */}
             <Route element={<RequireAuth />}>
               <Route path="/cart" element={<Cart />} />
               <Route path="/place-order" element={<PlaceOrder />} />
               <Route path="/orders" element={<Orders />} />
+              <Route path="/verify" element={<Verify />} />
             </Route>
           </Route>
         </Route>
