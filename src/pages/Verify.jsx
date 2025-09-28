@@ -11,8 +11,7 @@ const Verify = () => {
   const { navigate, setCartItems } = useContext(ShopContext);
   const { accessToken } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
-  const success = searchParams.get("success");
-  const orderId = searchParams.get("orderId");
+  const reference = searchParams.get("reference");
   const axiosPrivate = useAxiosPrivate();
 
   const verifyPayment = async () => {
@@ -20,9 +19,8 @@ const Verify = () => {
       return null;
     }
     try {
-      const response = await axiosPrivate.post("/api/order/verifyStripe", {
-        success,
-        orderId,
+      const response = await axiosPrivate.post("/api/order/verifypayStack", {
+        reference,
       });
       if (response.data.success) {
         setCartItems({});

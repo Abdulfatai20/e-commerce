@@ -10,8 +10,8 @@ import useAxiosPrivate from "../hooks/useAxiosPrivate";
 export const ShopContext = createContext();
 
 const ShopContextProvider = (props) => {
-  const currency = "$";
-  const delivery_fee = 10;
+  const currency = " ₦";
+  const delivery_fee = 50;
   const [search, setSearch] = useState("");
   const [showSearch, setShowSearch] = useState(false);
   const [cartItems, setCartItems] = useState({});
@@ -45,7 +45,7 @@ const ShopContextProvider = (props) => {
       } catch (error) {
         console.log(error);
         if (error.response?.status === 401 || error.response?.status === 403) {
-          toast.error('Session Expired. Login Again');
+          toast.error("Session Expired. Login Again");
         }
       }
     }
@@ -75,13 +75,16 @@ const ShopContextProvider = (props) => {
       } catch (error) {
         console.log(error);
         if (error.response?.status === 401 || error.response?.status === 403) {
-          toast.error('Session Expired. Login Again');
+          toast.error("Session Expired. Login Again");
         }
       }
     }
   };
 
   const getUserCart = async () => {
+    if (!accessToken) return null;
+    console.log("Fetching User Cart");
+
     try {
       const response = await axiosPrivate.post("/api/cart/get", {});
       if (response.data.success) {
@@ -127,11 +130,7 @@ const ShopContextProvider = (props) => {
   }, []);
 
   useEffect(() => {
-    if (accessToken) {
-      console.log("Fetching User Cart");
-      
-      getUserCart();
-    }
+    getUserCart();
   }, [accessToken]);
 
   const value = {

@@ -1,7 +1,6 @@
 import React, { useContext, useState } from "react";
 import Title from "../components/Title";
 import CartTotal from "../components/CartTotal";
-import { assets } from "../assets/assets";
 import { ShopContext } from "../context/ShopContext";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { toast } from "react-toastify";
@@ -77,18 +76,16 @@ const PlaceOrder = () => {
           }
           break;
 
-        case "stripe":
-          const responseStripe = await axiosPrivate.post(
-            "/api/order/stripe",
+        case "paystack":
+          const responsePayStack = await axiosPrivate.post(
+            "/api/order/paystack",
             orderData
           );
-          if (responseStripe.data.success) {
-            const { session_url } = responseStripe.data;
-            window.location.replace(session_url);
-            // setCartItems({});
-            // navigate("/orders");
+          if (responsePayStack.data.success) {
+            const { auth_url } = responsePayStack.data;
+            window.location.href = auth_url; //redirect to Paystack checkout
           } else {
-            toast.error(response.data.message);
+            toast.error(responsePayStack.data.message);
           }
           break;
 
@@ -211,17 +208,19 @@ const PlaceOrder = () => {
           {/* Payment Method Selection */}
           <div className="flex gap-3 flex-col lg:flex-row">
             <div
-              onClick={() => setMethod("stripe")}
+              onClick={() => setMethod("paystack")}
               className="flex items-center gap-3 border p-2 px-3 cursor-pointer"
             >
               <p
                 className={`min-w-3.5 h-3.5 border rounded-full ${
-                  method === "stripe" ? "bg-green-400" : ""
+                  method === "paystack" ? "bg-green-400" : ""
                 } `}
               ></p>
-              <img src={assets.stripe_logo} className="h-5 mx-4" alt="" />
+              <p className="text-orange-500 text-sm font-medium mx-4">
+                PAYSTACK
+              </p>
             </div>
-            <div
+            {/* <div
               onClick={() => setMethod("razorpay")}
               className="flex items-center gap-3 border p-2 px-3 cursor-pointer"
             >
@@ -231,7 +230,7 @@ const PlaceOrder = () => {
                 } `}
               ></p>
               <img src={assets.razorpay_logo} className="h-5 mx-4" alt="" />
-            </div>
+            </div> */}
             <div
               onClick={() => setMethod("cod")}
               className="flex items-center gap-3 border p-2 px-3 cursor-pointer"
