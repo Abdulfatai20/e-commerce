@@ -19,16 +19,16 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route path="/login" element={<Login />} />
-          <Route index element={<Home />} />
-
+          
           {/* Public routes */}
-          <Route element={<PersistLogin />}>
-            <Route path="/about" element={<About />} />
-            <Route path="/product/:productId" element={<Product />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/collection" element={<Collection />} />
+          <Route index element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/product/:productId" element={<Product />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/collection" element={<Collection />} />
 
-            {/* Protected routes */}
+          {/* Protected routes */}
+          <Route element={<PersistLogin />}>
             <Route element={<RequireAuth />}>
               <Route path="/cart" element={<Cart />} />
               <Route path="/place-order" element={<PlaceOrder />} />
