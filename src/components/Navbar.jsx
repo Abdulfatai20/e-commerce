@@ -15,9 +15,9 @@ const Navbar = () => {
 
   const signOut = async () => {
     await logout();
-    toast.success('Logged out successfully')
+    toast.success("Logged out successfully");
     setCartItems({});
-    navigate('/login')
+    navigate("/login");
   };
 
   return (
@@ -70,7 +70,10 @@ const Navbar = () => {
                 >
                   Orders
                 </p>
-                <p className="cursor-pointer hover:text-black" onClick={signOut}>
+                <p
+                  className="cursor-pointer hover:text-black"
+                  onClick={signOut}
+                >
                   Logout
                 </p>
               </div>
@@ -133,6 +136,18 @@ const Navbar = () => {
           >
             CONTACT
           </NavLink>
+          {accessToken && (
+            <button
+              onClick={() => {
+                setVisisble(false);
+                signOut();
+              }}
+              className="py-2 pl-6 border text-red-500 text-left "
+              to="/contact"
+            >
+              LOGOUT
+            </button>
+          )}
         </div>
       </div>
     </div>
